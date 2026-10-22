@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: sadovsky/slopfork-mazelib-goldens
+          path: goldens
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: fmt
+        run: cargo fmt --check
+      - name: clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: test
+        run: cargo test
+      - name: build adapter
+        run: cargo build --release --bin mazelib-adapter
+      - name: goldens (profile cr)
+        run: |
+          H=.claude/skills/slopfork/scripts/diff_harness.py
+          G=goldens
+          A=target/release/mazelib-adapter
+          for set in rng generate entrances solve transmute tostring monte_carlo; do
+            echo "== $set"
+            python3 $H compare --batch --profile cr --cases $G/cases/$set.jsonl --expected $G/expected/$set.jsonl --cmd "$A"
+            python3 $H check --batch --profile cr --cases $G/cases/$set.jsonl --cmd "$A" --checker "python3 $G/checkers/invariants.py"
+          done
