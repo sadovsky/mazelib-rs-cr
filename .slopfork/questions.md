@@ -19,3 +19,11 @@
 - Q-tr-1 (spec transmute/_common item 7, DeadEndFiller Errors): with start or end absent, the recommended mapping is TypeError, but `MazeError` has no TypeError-like variant. Conservative choice: DeadEndFiller proceeds and protects only the entrances given (the spec's other allowed option). Not covered by the goldens. (`// SLOPFORK-Q:` in src/transmute/dead_end.rs)
 - Q-tr-2 (spec DeadEndFiller item 3 vs item 7): sealing "the cell and its four adjacent squares" could cut a route on unusual grids (open posts). We seal the cell, then close each non-border adjacent square only if it has become a dead-end square itself (at most one open neighbour). On well-formed grids that is exactly the slot to the single neighbour, so all golden grids match exactly.
 - Q-tr-3 (spec _common item 7): start/end outside the grid return `MazeError::InvalidInput` from all three transmuters.
+
+## maze
+- Q-maze-1 (spec maze item 29/30): per-maze candidate ranking. Choice: prefer a candidate whose first path is non-empty, then the most solution paths; earliest attempt wins ties (matches the original's ranking whenever every attempt is solvable). Not observable under cr beyond the invariants.
+- Q-maze-2 (spec maze item 13): degenerate grids. Choice: `generate_entrances` returns `InvalidValue` up front when an axis has no odd interior index, or when a mode needing an inner cell has fewer than 2 inner cells; placement retries are additionally capped at 10,000 (then `InvalidValue`), so it never loops forever. No grid gives `InvalidInput`.
+
+## solve
+- Q-solve-1 (ShortestPath item 5 / ShortestPaths item 4): when the start's entry square has no cell move but start and end are orthogonally adjacent (d = 1), is the AssertionError still raised? Not covered by the goldens. Conservative choice: the entry-move check runs first (the documented validation order), so the error wins. (`// SLOPFORK-Q:` in src/solve/shortest_path.rs and src/solve/shortest_paths.rs)
+- Q-solve-2 (_common edge cases): for start == end or d = 1, every solver (except the entry-move error above) returns a single empty solution. Walkers whose entry square is outside the grid or a wall, or whose end is reachable by unit steps but not by cell moves (open posts), return one shortest unit-step route instead of walking, so the pruned result stays valid. Not covered by the goldens.

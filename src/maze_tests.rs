@@ -671,3 +671,16 @@ fn monte_carlo_custom_reducer() {
         .unwrap();
     check_mc(&m, (11, 11));
 }
+
+#[test]
+fn monte_carlo_with_real_shortest_path() {
+    for seed in 0..3 {
+        for d in [0.0, 0.5, 1.0] {
+            let mut m = Maze::with_seed(seed).unwrap();
+            m.generator = Some(Box::new(Prims::new(4, 4).unwrap()));
+            m.solver = Some(Box::new(crate::solve::ShortestPath::new()));
+            m.generate_monte_carlo(3, 3, d).unwrap();
+            check_mc(&m, (9, 9));
+        }
+    }
+}

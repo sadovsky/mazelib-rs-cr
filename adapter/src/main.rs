@@ -11,7 +11,11 @@ use mazelib::generate::{
     Ellers, GrowingTree, HuntAndKill, HuntOrder, Kruskal, MazeType, Prims, Room, Sidewinder, Skew,
     TrivialMaze, Wilsons,
 };
-use mazelib::{Cell, Generator, Grid, MazeError, Path, Rng};
+use mazelib::solve::{
+    BacktrackingSolver, Chain, Collision, RandomMouse, ShortestPath, ShortestPaths, Tremaux, Turn,
+};
+use mazelib::transmute::{CuldeSacFiller, DeadEndFiller, Perturbation};
+use mazelib::{Cell, Generator, Grid, Maze, MazeError, Path, Rng, Solver, Transmuter};
 use serde_json::{json, Value};
 
 /// A failed case: Python exception kind plus message.
@@ -228,6 +232,158 @@ fn op_rng(a: &Value, rng: &mut Rng) -> Out<Value> {
     Ok(json!({ "out": out }))
 }
 
+fn make_solver(algo: &str, p: &Value) -> Out<Box<dyn Solver>> {
+    let s: Box<dyn Solver> = match algo {
+        "BacktrackingSolver" => Box::new(BacktrackingSolver::new()),
+        "Chain" => Box::new(Chain::new(Turn::parse(str_or(p, "turn", "right")))),
+        "Collision" => Box::new(Collision::new()),
+        "RandomMouse" => Box::new(RandomMouse::new()),
+        "ShortestPath" => Box::new(ShortestPath::new()),
+        "ShortestPaths" => Box::new(ShortestPaths::new()),
+        "Tremaux" => Box::new(Tremaux::new()),
+        other => return Err(bad(format!("unknown solver `{other}`"))),
+    };
+    Ok(s)
+}
+
+fn make_transmuter(algo: &str, p: &Value) -> Out<Box<dyn Transmuter>> {
+    let int_or = |key: &str, default: i64| get(p, key).and_then(Value::as_i64).unwrap_or(default);
+    let t: Box<dyn Transmuter> = match algo {
+        "CuldeSacFiller" => Box::new(CuldeSacFiller::new()),
+        "DeadEndFiller" => Box::new(match get(p, "iterations") {
+            Some(v) if v.is_i64() => DeadEndFiller::new(int_or("iterations", 1)),
+            Some(v) => DeadEndFiller::from_f64(v.as_f64().unwrap_or(1.0)),
+            None => DeadEndFiller::new(1),
+        }),
+        "Perturbation" => Box::new(Perturbation::new(
+            int_or("repeat", 1),
+            int_or("new_walls", 1),
+        )),
+        other => return Err(bad(format!("unknown transmuter `{other}`"))),
+    };
+    Ok(t)
+}
+
+fn params(a: &Value) -> Value {
+    get(a, "params").cloned().unwrap_or_else(|| json!({}))
+}
+
+/// Run `f` on a fresh [`Maze`] that borrows the adapter's RNG streams.
+fn with_maze<T>(rng: &mut Rng, f: impl FnOnce(&mut Maze) -> Out<T>) -> Out<T> {
+    let mut m = Maze::new();
+    m.rng = std::mem::take(rng);
+    let r = f(&mut m);
+    *rng = std::mem::take(&mut m.rng);
+    r
+}
+
+fn op_entrances(a: &Value, rng: &mut Rng) -> Out<Value> {
+    let grid = grid_in(get(a, "grid").ok_or_else(|| bad("missing grid"))?)?;
+    with_maze(rng, |m| {
+        m.grid = Some(grid);
+        m.generate_entrances(
+            bool_or(a, "start_outer", true),
+            bool_or(a, "end_outer", true),
+        )?;
+        Ok(json!({ "start": cell_out(m.start), "end": cell_out(m.end) }))
+    })
+}
+
+fn op_solve(a: &Value, rng: &mut Rng) -> Out<Value> {
+    let grid = grid_in(get(a, "grid").ok_or_else(|| bad("missing grid"))?)?;
+    let solver = make_solver(str_or(a, "algo", ""), &params(a))?;
+    let (start, end) = (cell_in(a.get("start"))?, cell_in(a.get("end"))?);
+    with_maze(rng, |m| {
+        m.grid = Some(grid);
+        m.start = start;
+        m.end = end;
+        m.solver = Some(solver);
+        m.prune = bool_or(a, "prune", true);
+        m.solve()?;
+        Ok(json!({ "solutions": solutions_out(m.solutions.as_ref()) }))
+    })
+}
+
+fn op_transmute(a: &Value, rng: &mut Rng) -> Out<Value> {
+    let grid = grid_in(get(a, "grid").ok_or_else(|| bad("missing grid"))?)?;
+    let t = make_transmuter(str_or(a, "algo", ""), &params(a))?;
+    let (start, end) = (cell_in(a.get("start"))?, cell_in(a.get("end"))?);
+    with_maze(rng, |m| {
+        m.grid = Some(grid);
+        m.start = start;
+        m.end = end;
+        m.transmuters = vec![t];
+        m.transmute()?;
+        let g = m.grid.as_ref().ok_or_else(|| bad("grid vanished"))?;
+        Ok(json!({ "grid": grid_out(g) }))
+    })
+}
+
+fn op_tostring(a: &Value, rng: &mut Rng) -> Out<Value> {
+    let grid = grid_in(get(a, "grid").ok_or_else(|| bad("missing grid"))?)?;
+    let (start, end) = (cell_in(a.get("start"))?, cell_in(a.get("end"))?);
+    let solutions = match get(a, "solutions") {
+        None => None,
+        Some(v) => Some(
+            v.as_array()
+                .ok_or_else(|| bad("solutions must be a list"))?
+                .iter()
+                .map(|p| {
+                    p.as_array()
+                        .ok_or_else(|| bad("path must be a list"))?
+                        .iter()
+                        .map(|c| cell_in(Some(c))?.ok_or_else(|| bad("null cell")))
+                        .collect::<Out<Path>>()
+                })
+                .collect::<Out<Vec<Path>>>()?,
+        ),
+    };
+    with_maze(rng, |m| {
+        m.grid = Some(grid);
+        m.start = start;
+        m.end = end;
+        m.solutions = solutions;
+        let text = m.tostring(
+            bool_or(a, "entrances", false),
+            bool_or(a, "show_solutions", false),
+        );
+        Ok(json!({ "text": text }))
+    })
+}
+
+fn op_monte_carlo(a: &Value, rng: &mut Rng) -> Out<Value> {
+    let empty = json!({});
+    let solver_spec = get(a, "solver").unwrap_or(&empty);
+    let solver = make_solver(str_or(solver_spec, "algo", ""), &params(solver_spec))?;
+    let count = |key: &str| -> Out<usize> {
+        let n = int(a, key)?;
+        Ok(n.max(0) as usize)
+    };
+    let (repeat, entrances) = (count("repeat")?, count("entrances")?);
+    let difficulty = get(a, "difficulty")
+        .and_then(Value::as_f64)
+        .ok_or_else(|| bad("missing difficulty"))?;
+    // Python validates difficulty before building the generator.
+    if !(0.0..=1.0).contains(&difficulty) {
+        return Err(
+            MazeError::InvalidInput("Maze difficulty must be between 0 and 1.".into()).into(),
+        );
+    }
+    let generator = make_generator(get(a, "generator").unwrap_or(&empty))?;
+    with_maze(rng, |m| {
+        m.generator = Some(generator);
+        m.solver = Some(solver);
+        m.generate_monte_carlo(repeat, entrances, difficulty)?;
+        let g = m.grid.as_ref().ok_or_else(|| bad("no grid"))?;
+        Ok(json!({
+            "grid": grid_out(g),
+            "start": cell_out(m.start),
+            "end": cell_out(m.end),
+            "solutions": solutions_out(m.solutions.as_ref()),
+        }))
+    })
+}
+
 fn run(case: &Value, rng: &mut Rng) -> Out<Value> {
     if let Some(seed) = get(case, "seed") {
         let seed = seed
@@ -239,6 +395,11 @@ fn run(case: &Value, rng: &mut Rng) -> Out<Value> {
     let a = get(case, "args").unwrap_or(&empty);
     match str_or(case, "op", "") {
         "generate" => op_generate(a, rng),
+        "entrances" => op_entrances(a, rng),
+        "solve" => op_solve(a, rng),
+        "transmute" => op_transmute(a, rng),
+        "tostring" => op_tostring(a, rng),
+        "monte_carlo" => op_monte_carlo(a, rng),
         "rng" => op_rng(a, rng),
         other => Err(bad(format!("unknown op `{other}`"))),
     }

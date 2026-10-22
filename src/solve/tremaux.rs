@@ -40,7 +40,9 @@ impl Solver for Tremaux {
                 0
             } else {
                 let count = |i: usize| visits[moves[i].1 .0 * w + moves[i].1 .1].min(2);
-                let group = |k: u32| -> Vec<usize> { (0..moves.len()).filter(|&i| count(i) == k).collect() };
+                let group = |k: u32| -> Vec<usize> {
+                    (0..moves.len()).filter(|&i| count(i) == k).collect()
+                };
                 let fresh = group(0);
                 if !fresh.is_empty() {
                     fresh[rng.py.below(fresh.len())]

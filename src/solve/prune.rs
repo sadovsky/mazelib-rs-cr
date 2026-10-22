@@ -7,7 +7,10 @@ use crate::{Cell, Path};
 /// Clean each path independently: loop erasure, then endpoint trimming.
 /// The list keeps its length and order; empty paths stay.
 pub fn prune_solutions(paths: Vec<Path>, start: Cell, end: Cell) -> Vec<Path> {
-    paths.into_iter().map(|p| prune_one(p, start, end)).collect()
+    paths
+        .into_iter()
+        .map(|p| prune_one(p, start, end))
+        .collect()
 }
 
 /// Loop erasure followed by endpoint trimming for one path.
@@ -81,7 +84,8 @@ mod tests {
         let cap = p.len();
         let mut passes = 0;
         while p.len() > 2 && passes < cap {
-            let hit = (0..p.len()).find_map(|i| (i + 1..p.len()).find(|&j| p[j] == p[i]).map(|j| (i, j)));
+            let hit =
+                (0..p.len()).find_map(|i| (i + 1..p.len()).find(|&j| p[j] == p[i]).map(|j| (i, j)));
             match hit {
                 Some((i, j)) => {
                     p.drain(i..j);
@@ -119,7 +123,9 @@ mod tests {
             for _ in 0..20 {
                 let v: Vec<usize> = (0..len)
                     .map(|_| {
-                        x = x.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+                        x = x
+                            .wrapping_mul(6364136223846793005)
+                            .wrapping_add(1442695040888963407);
                         ((x >> 33) % 5) as usize
                     })
                     .collect();
@@ -132,9 +138,33 @@ mod tests {
     fn golden_raw_walk_prunes_to_r1() {
         // solve/BacktrackingSolver/Prims3x3/oo/np/s0 (27 squares).
         let raw: Path = vec![
-            (3, 1), (4, 1), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (4, 5), (3, 5), (4, 5),
-            (5, 5), (5, 4), (5, 3), (5, 2), (5, 1), (4, 1), (3, 1), (3, 2), (3, 3), (3, 2),
-            (3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+            (3, 1),
+            (4, 1),
+            (5, 1),
+            (5, 2),
+            (5, 3),
+            (5, 4),
+            (5, 5),
+            (4, 5),
+            (3, 5),
+            (4, 5),
+            (5, 5),
+            (5, 4),
+            (5, 3),
+            (5, 2),
+            (5, 1),
+            (4, 1),
+            (3, 1),
+            (3, 2),
+            (3, 3),
+            (3, 2),
+            (3, 1),
+            (2, 1),
+            (1, 1),
+            (1, 2),
+            (1, 3),
+            (1, 4),
+            (1, 5),
         ];
         let r1: Path = vec![(3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)];
         assert_eq!(prune_solutions(vec![raw], (3, 0), (1, 6)), vec![r1]);
@@ -148,8 +178,14 @@ mod tests {
             vec![vec![(5, 2), (5, 1), (4, 1)], vec![]]
         );
         // A single square is never trimmed.
-        assert_eq!(prune_solutions(vec![vec![(5, 3)]], (5, 3), (5, 3)), vec![vec![(5, 3)]]);
+        assert_eq!(
+            prune_solutions(vec![vec![(5, 3)]], (5, 3), (5, 3)),
+            vec![vec![(5, 3)]]
+        );
         // Two squares: both ends checked once.
-        assert_eq!(prune_solutions(vec![vec![(1, 1), (1, 2)]], (1, 1), (1, 2)), vec![Vec::<Cell>::new()]);
+        assert_eq!(
+            prune_solutions(vec![vec![(1, 1), (1, 2)]], (1, 1), (1, 2)),
+            vec![Vec::<Cell>::new()]
+        );
     }
 }

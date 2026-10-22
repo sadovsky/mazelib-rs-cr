@@ -296,7 +296,9 @@ pub(crate) mod testutil {
 
     /// Grid G1 from the specs (Prims 3x3).
     pub fn g1() -> Grid {
-        Grid::from_rows(&["#######", "#.....#", "#.#####", "#...#.#", "#.###.#", "#.....#", "#######"])
+        Grid::from_rows(&[
+            "#######", "#.....#", "#.#####", "#...#.#", "#.###.#", "#.....#", "#######",
+        ])
     }
 
     /// Grid C1 from the specs (CellularAutomaton 6x6).
@@ -330,7 +332,9 @@ pub(crate) mod testutil {
 
     /// Two disconnected halves: the end can't be reached.
     pub fn split() -> Grid {
-        Grid::from_rows(&["#######", "#.#...#", "#.#.#.#", "#.#.#.#", "#.#...#", "#.#...#", "#######"])
+        Grid::from_rows(&[
+            "#######", "#.#...#", "#.#.#.#", "#.#.#.#", "#.#...#", "#.#...#", "#######",
+        ])
     }
 
     /// The checker's distance (unit steps; start and end may be walls).
@@ -401,8 +405,14 @@ mod tests {
     #[test]
     fn validation() {
         let g = g1();
-        assert!(matches!(validate(&g, (7, 0), (1, 1)), Err(MazeError::InvalidInput(_))));
-        assert!(matches!(validate(&g, (1, 1), (1, 7)), Err(MazeError::InvalidInput(_))));
+        assert!(matches!(
+            validate(&g, (7, 0), (1, 1)),
+            Err(MazeError::InvalidInput(_))
+        ));
+        assert!(matches!(
+            validate(&g, (1, 1), (1, 7)),
+            Err(MazeError::InvalidInput(_))
+        ));
         assert!(validate(&g, (6, 6), (0, 0)).is_ok());
     }
 
@@ -413,6 +423,9 @@ mod tests {
         assert_eq!(s.len(), 2);
         assert!(s.iter().all(|p| p.len() == 19));
         assert_ne!(s[0], s[1]);
-        assert_eq!(all_shortest(&split(), (1, 1), (1, 5), 64), Vec::<Path>::new());
+        assert_eq!(
+            all_shortest(&split(), (1, 1), (1, 5), 64),
+            Vec::<Path>::new()
+        );
     }
 }
