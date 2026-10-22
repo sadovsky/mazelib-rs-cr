@@ -9,10 +9,14 @@
   "target": {
     "language": "rust",
     "style": "idiomatic",
-    "src": "src"
+    "src": "src",
+    "edition": "2021",
+    "toolchain": "stable",
+    "crate": "mazelib (zero deps)",
+    "adapter": "bin mazelib-adapter"
   },
   "mode": "cleanroom",
-  "phase": "intake",
+  "phase": "inventory",
   "sealed_paths": [
     "../mazelib-source",
     "../mazelib",
@@ -37,5 +41,6 @@
   ],
   "probe_commands": [],
   "default_level": "L2",
-  "modules": []
+  "modules": [],
+  "goldens": "/home/user/slopfork-mazelib-goldens (shared, pre-recorded; profile cr)"
 }
