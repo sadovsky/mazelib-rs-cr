@@ -46,7 +46,7 @@ mod tests {
     fn golden_cases() {
         let mut rng = Rng::seeded(0).unwrap();
         let g = g1();
-        let r1 = vec![(3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)];
+        let r1 = g1_route();
         assert_eq!(
             ShortestPath::new()
                 .solve(&g, (3, 0), (1, 6), &mut rng)

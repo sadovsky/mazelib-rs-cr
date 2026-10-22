@@ -301,6 +301,37 @@ pub(crate) mod testutil {
         ])
     }
 
+    /// Concatenate straight runs: from each corner to the next, one square at a time
+    /// (each corner appears once). Consecutive corners must share a row or a column.
+    pub fn straight_runs(corners: &[Cell]) -> Path {
+        let mut out: Path = corners.iter().take(1).copied().collect();
+        for w in corners.windows(2) {
+            let (mut cur, to) = (w[0], w[1]);
+            assert!(cur.0 == to.0 || cur.1 == to.1, "not a straight run");
+            while cur != to {
+                cur.0 = step_toward(cur.0, to.0);
+                cur.1 = step_toward(cur.1, to.1);
+                out.push(cur);
+            }
+        }
+        out
+    }
+
+    fn step_toward(a: usize, b: usize) -> usize {
+        match a.cmp(&b) {
+            std::cmp::Ordering::Less => a + 1,
+            std::cmp::Ordering::Greater => a - 1,
+            std::cmp::Ordering::Equal => a,
+        }
+    }
+
+    /// The unique route through G1 from start (3, 0) to end (1, 6), endpoints
+    /// excluded: up the left column to the top row, then right along it.
+    pub fn g1_route() -> Path {
+        let (entry, exit) = ((3, 1), (1, 5));
+        straight_runs(&[entry, (exit.0, entry.1), exit])
+    }
+
     /// Grid C1 from the specs (CellularAutomaton 6x6).
     pub fn c1() -> Grid {
         Grid::from_rows(&[

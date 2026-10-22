@@ -4,6 +4,8 @@ mod backtracking;
 mod chain;
 mod collision;
 mod common;
+#[cfg(test)]
+pub(crate) use common::testutil;
 mod prune;
 mod random_mouse;
 mod shortest_path;

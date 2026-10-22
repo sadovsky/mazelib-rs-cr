@@ -39,7 +39,7 @@ mod tests {
                 .solve(&g, (3, 0), (1, 6), &mut rng)
                 .unwrap();
             check_walker(&g, (3, 0), (1, 6), &raw);
-            let r1 = vec![(3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)];
+            let r1 = g1_route();
             assert_eq!(prune_solutions(raw, (3, 0), (1, 6)), vec![r1]);
             let raw = RandomMouse::new()
                 .solve(&g, (5, 3), (3, 1), &mut rng)

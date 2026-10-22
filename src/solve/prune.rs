@@ -77,6 +77,7 @@ fn erase_loops(path: Path) -> Path {
 
 #[cfg(test)]
 mod tests {
+    use super::super::common::testutil::{g1_route, straight_runs};
     use super::*;
 
     /// The pass-by-pass definition, for cross-checking.
@@ -137,36 +138,21 @@ mod tests {
     #[test]
     fn golden_raw_walk_prunes_to_r1() {
         // solve/BacktrackingSolver/Prims3x3/oo/np/s0 (27 squares).
-        let raw: Path = vec![
-            (3, 1),
-            (4, 1),
-            (5, 1),
-            (5, 2),
-            (5, 3),
-            (5, 4),
-            (5, 5),
-            (4, 5),
-            (3, 5),
-            (4, 5),
-            (5, 5),
-            (5, 4),
-            (5, 3),
-            (5, 2),
-            (5, 1),
-            (4, 1),
-            (3, 1),
-            (3, 2),
-            (3, 3),
-            (3, 2),
-            (3, 1),
-            (2, 1),
-            (1, 1),
-            (1, 2),
-            (1, 3),
-            (1, 4),
-            (1, 5),
-        ];
-        let r1: Path = vec![(3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)];
+        // Out and back into the bottom-right dead end, out and back into the
+        // middle dead end, then the true route.
+        let round_trip = |corners: &[Cell]| {
+            let out = straight_runs(corners);
+            let back: Path = out.iter().rev().skip(1).copied().collect();
+            out.into_iter().chain(back).collect::<Path>()
+        };
+        let entry = (3, 1);
+        let (bottom_left, bottom_right, right_dead_end) = ((5, 1), (5, 5), (3, 5));
+        let middle_dead_end = (3, 3);
+        let mut raw = round_trip(&[entry, bottom_left, bottom_right, right_dead_end]);
+        raw.extend(round_trip(&[entry, middle_dead_end]).into_iter().skip(1));
+        raw.extend(g1_route().into_iter().skip(1));
+        assert_eq!(raw.len(), 27);
+        let r1: Path = g1_route();
         assert_eq!(prune_solutions(vec![raw], (3, 0), (1, 6)), vec![r1]);
     }
 

@@ -213,7 +213,7 @@ mod tests {
     #[test]
     fn golden_g1_open_guide_line() {
         let g = g1();
-        let r1 = vec![(3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)];
+        let r1 = g1_route();
         for turn in [Turn::Left, Turn::Right] {
             let mut rng = Rng::seeded(0).unwrap();
             let raw = Chain::new(turn)

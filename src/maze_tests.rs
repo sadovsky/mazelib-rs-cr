@@ -29,7 +29,7 @@ fn maze_with(rows: &[&str]) -> Maze {
 }
 
 fn g1_path() -> Path {
-    vec![(3, 1), (2, 1), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)]
+    crate::solve::testutil::g1_route()
 }
 
 #[test]
