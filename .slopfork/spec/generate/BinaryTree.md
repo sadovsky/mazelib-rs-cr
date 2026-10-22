@@ -39,3 +39,68 @@ Builds a perfect maze with the binary-tree algorithm. Every cell opens a wall to
 | skew `"nw"` (lowercase) | treated as unrecognized, so random |
 | 3x3 | 7x7 perfect |
 
+## Required invariants (from invariants.json)
+
+| Variant | Params | Must hold |
+|---|---|---|
+| v0 | `{}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+| v1 | `{"skew": "NW"}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+| v2 | `{"skew": "NE"}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+| v3 | `{"skew": "SW"}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+| v4 | `{"skew": "SE"}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+
+Goldens sizes for every variant: 3x3, 3x5, 5x3, 4x7, 8x8, 12x17 (h x w), seeds 0-7. Invalid-size cases: see _common.md.
+
+## Worked examples
+
+- Case `gen/BinaryTree/v1/h3w5/s0`: seed 0, h=3, w=5, params `{"skew": "NW"}`. skew NW: bottom row and left column are full corridors
+  Original output (one valid instance; profile cr does not require reproducing it). Rendered with `X` = wall (protocol `#`) and `.` = open:
+
+        XXXXXXXXXXX
+        X...X.....X
+        X.XXX.XXXXX
+        X.......X.X
+        X.XXXXXXX.X
+        X.........X
+        XXXXXXXXXXX
+
+- Case `gen/BinaryTree/v2/h3w5/s0`: seed 0, h=3, w=5, params `{"skew": "NE"}`. skew NE: bottom row and right column
+  Original output (one valid instance; profile cr does not require reproducing it). Rendered with `X` = wall (protocol `#`) and `.` = open:
+
+        XXXXXXXXXXX
+        X.....X...X
+        XXXXX.XXX.X
+        X.........X
+        XXXXXXXXX.X
+        X.........X
+        XXXXXXXXXXX
+
+- Case `gen/BinaryTree/v3/h3w5/s0`: seed 0, h=3, w=5, params `{"skew": "SW"}`. skew SW: top row and left column
+  Original output (one valid instance; profile cr does not require reproducing it). Rendered with `X` = wall (protocol `#`) and `.` = open:
+
+        XXXXXXXXXXX
+        X.........X
+        X.XXXXXXXXX
+        X.........X
+        X.X.XXX.X.X
+        X.X...X.X.X
+        XXXXXXXXXXX
+
+- Case `gen/BinaryTree/v4/h3w5/s0`: seed 0, h=3, w=5, params `{"skew": "SE"}`. skew SE: top row and right column
+  Original output (one valid instance; profile cr does not require reproducing it). Rendered with `X` = wall (protocol `#`) and `.` = open:
+
+        XXXXXXXXXXX
+        X.........X
+        XXXXXXXXX.X
+        X.........X
+        X.X.XXX.X.X
+        X.X.X...X.X
+        XXXXXXXXXXX
+
+- Case `gen/BinaryTree/invalid/h2w5`: seed 0, h=2, w=5, params `{}`
+  Original result: error kind AssertionError.
+- Case `gen/BinaryTree/invalid/h-1w4`: seed 0, h=-1, w=4, params `{}`
+  Original result: error kind AssertionError.
+
+## Open questions
+None yet.

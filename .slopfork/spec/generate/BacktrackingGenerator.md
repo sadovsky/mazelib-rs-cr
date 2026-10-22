@@ -30,3 +30,31 @@ Builds a perfect maze with the recursive-backtracker algorithm, also called rand
 | 3x3 | 7x7 perfect maze |
 | 3x5 / 5x3 | correct non-square shape, perfect |
 
+## Required invariants (from invariants.json)
+
+| Variant | Params | Must hold |
+|---|---|---|
+| v0 | `{}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+
+Goldens sizes for every variant: 3x3, 3x5, 5x3, 4x7, 8x8, 12x17 (h x w), seeds 0-7. Invalid-size cases: see _common.md.
+
+## Worked examples
+
+- Case `gen/BacktrackingGenerator/v0/h3w5/s0`: seed 0, h=3, w=5, params `{}`
+  Original output (one valid instance; profile cr does not require reproducing it). Rendered with `X` = wall (protocol `#`) and `.` = open:
+
+        XXXXXXXXXXX
+        X.....X...X
+        X.XXX.XXX.X
+        X...X...X.X
+        XXX.XXXXX.X
+        X.........X
+        XXXXXXXXXXX
+
+- Case `gen/BacktrackingGenerator/invalid/h2w5`: seed 0, h=2, w=5, params `{}`
+  Original result: error kind AssertionError.
+- Case `gen/BacktrackingGenerator/invalid/h-1w4`: seed 0, h=-1, w=4, params `{}`
+  Original result: error kind AssertionError.
+
+## Open questions
+None yet.

@@ -30,3 +30,31 @@ Builds a perfect maze using the Aldous-Broder random-walk algorithm, which finds
 | 3x3 (smallest) | 7x7 grid, perfect |
 | non-square, e.g. 3x5 or 5x3 | `(2h+1) x (2w+1)`, perfect |
 
+## Required invariants (from invariants.json)
+
+| Variant | Params | Must hold |
+|---|---|---|
+| v0 | `{}` | acyclic, alphabet, border_walls, cells_open, connected, corners_walls, perfect, shape |
+
+Goldens sizes for every variant: 3x3, 3x5, 5x3, 4x7, 8x8, 12x17 (h x w), seeds 0-7. Invalid-size cases: see _common.md.
+
+## Worked examples
+
+- Case `gen/AldousBroder/v0/h3w3/s0`: seed 0, h=3, w=3, params `{}`
+  Original output (one valid instance; profile cr does not require reproducing it). Rendered with `X` = wall (protocol `#`) and `.` = open:
+
+        XXXXXXX
+        X.....X
+        X.XXX.X
+        X...X.X
+        XXXXX.X
+        X.....X
+        XXXXXXX
+
+- Case `gen/AldousBroder/invalid/h2w5`: seed 0, h=2, w=5, params `{}`
+  Original result: error kind AssertionError.
+- Case `gen/AldousBroder/invalid/h-1w4`: seed 0, h=-1, w=4, params `{}`
+  Original result: error kind AssertionError.
+
+## Open questions
+None yet.
