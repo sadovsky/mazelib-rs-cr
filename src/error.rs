@@ -22,6 +22,10 @@ impl MazeError {
         MazeError::InvalidValue(msg.into())
     }
 
+    pub(crate) fn empty(msg: impl Into<String>) -> Self {
+        MazeError::Empty(msg.into())
+    }
+
     /// The human-readable message.
     pub fn message(&self) -> &str {
         match self {
