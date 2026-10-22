@@ -1,0 +1,16 @@
+[package]
+name = "mazelib"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "An independent clean-room implementation of the mazelib API in Rust"
+publish = false
+
+[dependencies]
+
+[workspace]
+members = [".", "adapter"]
+default-members = [".", "adapter"]
+
+[profile.release]
+debug = false
