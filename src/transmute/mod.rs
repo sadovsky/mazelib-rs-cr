@@ -29,7 +29,12 @@ pub(crate) mod tests {
     use super::Transmuter;
     use crate::grid::OPEN;
     use crate::{Cell, Grid, Rng};
+
     use std::collections::HashMap;
+
+    /// Every invariant a transmuter golden case is checked against.
+    /// (Space-separated, in checker order.)
+    const ALL_PROPS: &str = "shape border_unchanged only_adds_walls keeps_route keeps_shortest_length perfect_if_input_perfect";
 
     /// The Prims 3x3 golden grid.
     pub(crate) const G1: [&str; 7] = [
@@ -140,25 +145,14 @@ pub(crate) mod tests {
             make(&params)
                 .transmute(&mut after, Some(start), Some(end), &mut rng)
                 .unwrap();
-            let all = [
-                "shape",
-                "border_unchanged",
-                "only_adds_walls",
-                "keeps_route",
-                "keeps_shortest_length",
-                "perfect_if_input_perfect",
-            ];
-            let props: &[&str] = match algo {
-                // The port keeps perfection for every parameter set.
-                "Perturbation" => &[
-                    "shape",
-                    "border_unchanged",
-                    "keeps_route",
-                    "perfect_if_input_perfect",
-                ],
-                _ => &all,
-            };
-            assert_invariants(id, &before, &after, start, end, props);
+            // The port keeps perfection for every parameter set, so Perturbation
+            // checks everything except the two wall-only properties.
+            let perturbation_skips = ["only_adds_walls", "keeps_shortest_length"];
+            let props: Vec<&str> = ALL_PROPS
+                .split(' ')
+                .filter(|p| algo != "Perturbation" || !perturbation_skips.contains(p))
+                .collect();
+            assert_invariants(id, &before, &after, start, end, &props);
             if algo != "Perturbation" {
                 assert_eq!(after.to_rows(), want.to_rows(), "{id}: exact grid");
             }
