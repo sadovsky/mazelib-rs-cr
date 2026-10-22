@@ -16,7 +16,7 @@
     "adapter": "bin mazelib-adapter"
   },
   "mode": "cleanroom",
-  "phase": "spec",
+  "phase": "build",
   "sealed_paths": [
     "../mazelib-source",
     "../mazelib",

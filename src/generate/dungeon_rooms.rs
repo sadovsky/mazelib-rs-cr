@@ -152,6 +152,7 @@ impl Generator for DungeonRooms {
     fn generate(&mut self, rng: &mut Rng) -> Result<Grid> {
         let (h, w) = (self.h, self.w);
         let mut grid = match &self.base {
+            // SLOPFORK-Q: a supplied grid is copied as-is (shape and frame kept).
             Some(g) => g.clone(),
             None => Grid::walls(2 * h + 1, 2 * w + 1),
         };
