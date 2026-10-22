@@ -14,3 +14,8 @@
 ## generate/DungeonRooms
 - Q4 (spec item 3): For rooms that run past the grid, the spec allows clipping or skipping. Conservative choice: clip to the interior (rows 1..2h-1, cols 1..2w-1) and then apply the odd-corner door rule to the clipped rectangle. The frame is never opened. (`// SLOPFORK-Q:` in src/generate/dungeon_rooms.rs)
 - Q5: A supplied `grid` with even dimensions (e.g. 10x10, which gives a 4x4 size) is copied as-is, so the output keeps the supplied shape. Only the `(2h+1)x(2w+1)` region is worked on, and the supplied frame is not rewritten. No golden supplies `grid`.
+
+## transmute (CuldeSacFiller, DeadEndFiller, Perturbation)
+- Q-tr-1 (spec transmute/_common item 7, DeadEndFiller Errors): with start or end absent, the recommended mapping is TypeError, but `MazeError` has no TypeError-like variant. Conservative choice: DeadEndFiller proceeds and protects only the entrances given (the spec's other allowed option). Not covered by the goldens. (`// SLOPFORK-Q:` in src/transmute/dead_end.rs)
+- Q-tr-2 (spec DeadEndFiller item 3 vs item 7): sealing "the cell and its four adjacent squares" could cut a route on unusual grids (open posts). We seal the cell, then close each non-border adjacent square only if it has become a dead-end square itself (at most one open neighbour). On well-formed grids that is exactly the slot to the single neighbour, so all golden grids match exactly.
+- Q-tr-3 (spec _common item 7): start/end outside the grid return `MazeError::InvalidInput` from all three transmuters.

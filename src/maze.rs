@@ -193,11 +193,7 @@ impl Maze {
             .ok_or_else(|| MazeError::input("No maze-solving algorithm has been set."))?;
         let (start, end) = match (self.start, self.end) {
             (Some(s), Some(e)) => (s, e),
-            _ => {
-                return Err(MazeError::input(
-                    "Start and end times must be set first.",
-                ))
-            }
+            _ => return Err(MazeError::input("Start and end times must be set first.")),
         };
         let grid = self
             .grid
@@ -262,7 +258,10 @@ impl Maze {
                 }
             }
         }
-        let lines: Vec<String> = chars.into_iter().map(|row| row.into_iter().collect()).collect();
+        let lines: Vec<String> = chars
+            .into_iter()
+            .map(|row| row.into_iter().collect())
+            .collect();
         lines.join("\n")
     }
 
@@ -293,9 +292,7 @@ impl Maze {
     {
         // `contains` is false for NaN, as required.
         if !(0.0..=1.0).contains(&difficulty) {
-            return Err(MazeError::input(
-                "Maze difficulty must be between 0 and 1.",
-            ));
+            return Err(MazeError::input("Maze difficulty must be between 0 and 1."));
         }
         if repeat < 1 {
             return Err(MazeError::input("Monte Carlo repeat must be at least 1."));
@@ -405,3 +402,7 @@ fn opposite(side: usize) -> usize {
 fn manhattan(a: Cell, b: Cell) -> usize {
     a.0.abs_diff(b.0) + a.1.abs_diff(b.1)
 }
+
+#[cfg(test)]
+#[path = "maze_tests.rs"]
+mod tests;
