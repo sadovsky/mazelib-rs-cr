@@ -42,4 +42,4 @@ Grid G1 is the 7x7 `grid` field of case `solve/BacktrackingSolver/Prims3x3/oo/p/
 - Lengths of the single solution on the other outer/outer goldens: Prims6x6 27, Prims10x10 31, DungeonRooms6x6 27, DungeonRooms10x10 37, CellularAutomaton6x6 23.
 
 ## Open questions
-None yet.
+- Q-solve-1 (answered): confirmed. The entry-move check comes first, so when the start's entry square has no cell move the AssertionError is raised even if start and end are adjacent. The same holds for ShortestPaths.

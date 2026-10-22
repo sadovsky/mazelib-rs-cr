@@ -24,8 +24,8 @@ Builds a perfect maze with Eller's algorithm, one row at a time, tracking which 
 
 ## Invariants
 - perfect, cells_open, corners_walls, border_walls, shape, alphabet, for every xskew/yskew including 0 and 1.
-- With `xskew = 0`, every row except the last has no horizontal openings. Every cell is connected through vertical passages, and the last row is fully joined.
-- With `xskew = 1`, every row is one horizontal corridor (all cells end up in one set), and each row connects downward through at least one slot.
+- With `xskew = 0`, every row except the last has no horizontal openings. Every cell is connected through vertical passages. In the last row, every adjacent pair in different sets is joined; an adjacent pair that already shares a set (both reached from above by the same set) stays closed.
+- With `xskew = 1`, every adjacent pair in different sets is joined. The no-loop rule takes priority: an adjacent pair already in the same set is never joined. So the top row is always one full horizontal corridor, and later rows are full corridors only when no set reaches them through more than one cell (always true with `yskew = 0`). Each row still connects downward through at least one slot.
 
 ## Errors
 | Condition | Error kind | Contractual message? |
@@ -87,4 +87,4 @@ Goldens sizes for every variant: 3x3, 3x5, 5x3, 4x7, 8x8, 12x17 (h x w), seeds 0
   Original result: error kind AssertionError.
 
 ## Open questions
-None yet.
+- Q-gen-2 (answered): the full-corridor property for `xskew = 1` is subordinate to the no-loop rule; see Invariants.

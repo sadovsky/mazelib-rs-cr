@@ -114,4 +114,5 @@ Goldens sizes for every variant: 3x3, 3x5, 5x3, 4x7, 8x8, 12x17 (h x w), seeds 0
   Original result: error kind ValueError.
 
 ## Open questions
-None yet.
+- Q4 (answered): clipping out-of-grid rooms to the interior and applying the odd-corner door rule to the clipped rectangle is acceptable. Never open the frame.
+- Q5 (answered): a supplied grid with even dimensions is kept at its supplied shape. Only the `(2h+1) x (2w+1)` region is worked on; the extra last row/column and the supplied frame are left exactly as supplied. This matches the original.

@@ -27,7 +27,8 @@ Two independent Mersenne Twister (MT19937, Matsumoto & Nishimura 1998, reference
 11. **NumPy legacy random_interval(max)**: `max == 0` → 0 with no draw. Otherwise `mask` = `max` with every bit below its highest set bit also set; if `max <= 0xFFFFFFFF` repeat `v = u32 & mask` until `v <= max`; else the same with 64-bit draws (`(hi << 32) | lo`, first draw is the high word).
 12. **NumPy legacy shuffle(x)** (1-D): for `i` from `len(x)-1` down to 1: `j = random_interval(i)`; swap `x[i]`, `x[j]`.
 13. **NumPy random_sample()**: same 53-bit construction as item 3, on the NumPy stream.
-14. **set_seed(seed)** (the `Maze.set_seed` / adapter `seed` semantics): seeds both streams; if the NumPy seed is out of range the whole case fails with ValueError (before the op runs).
+14. **set_seed(seed)** (the `Maze.set_seed` / adapter `seed` semantics): seeds both streams; if the NumPy seed is out of range the whole case fails with ValueError (before the op runs). Observed order: the Python stream is seeded first, then the NumPy seed is rejected, so after the error the Python stream is reseeded and the NumPy stream is unchanged. The goldens cannot observe this (the case fails either way); checking the range first and leaving both streams unchanged is also acceptable.
+15. **randbelow(0)** is never reached on valid input: every public path that could ask for it (`choice` on empty, empty `randrange`) raises first. A port may return 0 without drawing; the original library would not terminate there.
 
 ## Errors
 | Condition | Error kind |

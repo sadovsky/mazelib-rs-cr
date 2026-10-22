@@ -21,3 +21,8 @@
 - Files: `.slopfork/spec/transmute/_common.md`, `CuldeSacFiller.md`, `DeadEndFiller.md`, `Perturbation.md`.
 - Command: as for solve, with `--against .slopfork/spec/transmute`.
 - First run (2026-10-22): 0 findings across 65 source files. Clean.
+
+## Re-audit after builder answers (2026-10-22)
+- Spec changes: `rng.md` (item 14 seeding order note; new item 15 on randbelow(0)), `generate/Ellers.md` (Invariants for xskew 0/1 corrected; Q-gen-2), `generate/CellularAutomaton.md` (Q3: non-finite and huge parameters), `generate/DungeonRooms.md` (Q4, Q5), `transmute/_common.md` (item 7 out-of-grid entrances; Q-tr-1, Q-tr-3), `solve/ShortestPath.md` (Q-solve-1).
+- Command (per target: `rng.md`, `generate`, `solve`, `transmute`, `maze.md`): `leak_audit.py --source /home/user/mazelib-source --against <target> --mode spec --allow-identifiers-from /home/user/mazelib-source/docs --allow-identifiers-from /home/user/mazelib-source/README.md --allow-identifiers-from /home/user/slopfork-mazelib-goldens`
+- Result: 0 findings for each of the five targets, across 65 source files. Clean.

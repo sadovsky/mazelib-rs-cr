@@ -83,4 +83,4 @@ Goldens sizes for every variant: 3x3, 3x5, 5x3, 4x7, 8x8, 12x17 (h x w), seeds 0
   Original result: error kind AssertionError.
 
 ## Open questions
-None yet.
+- Q3 (answered): non-finite values. In the original, NaN for `density` (or for `complexity` once at least one seed is grown) raises ValueError at `generate()`, and an infinite `density` (positive or negative) or infinite `complexity` raises OverflowError. Negative finite values give zero seeds or zero steps. Huge finite values only cost time. The goldens cover none of this. A port may cap the seed count and the steps per seed as a resource bound (a step that cannot extend leaves the state unchanged, so capping steps at the number of posts changes nothing). For non-finite values, either the original's error kinds or treating them as 0 is acceptable under `cr`; raising matches the original.
