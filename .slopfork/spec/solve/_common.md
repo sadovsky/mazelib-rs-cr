@@ -32,7 +32,7 @@ Grid of H rows and W columns, 1 = wall, 0 = open (protocol strings: `#` wall, `.
 5. If start and end are orthogonally adjacent (d = 1), the only valid solution is the empty list `[]`, and the checker accepts it. The entrance helper never places entrances this close, but a user can.
 6. An empty solution list `[]` means "no solution found".
 
-Example (goldens, grid G1 below, start (3,0) on the west border, end (1,6) on the east border, d = 8): the valid shortest solution is (3,1), (2,1), (1,1), (1,2), (1,3), (1,4), (1,5), which is 7 squares. (3,1) is the start's entry square and (1,5) is the end's entry square.
+Example (goldens, grid G1 below, start (3,0) on the west border, end (1,6) on the east border, d = 8): the valid shortest solution is R1: up column 1 from (3,1) to (1,1), then along row 1 to (1,5), which is 7 squares. (3,1) is the start's entry square and (1,5) is the end's entry square.
 
 ## Behavior
 7. Validation, in this order, before any solving:
@@ -108,9 +108,9 @@ The goldens' `solve` set contains no invalid-input cases. All 384 cases are vali
 | end unreachable | see item 17 |
 
 ## Worked examples (goldens `solve` set)
-Grid G1 (Prims 3x3), rows: `#######`, `#.....#`, `#.#####`, `#...#.#`, `#.###.#`, `#.....#`, `#######`.
+Grid G1 is the 7x7 `grid` field of case `solve/BacktrackingSolver/Prims3x3/oo/p/s0` in the goldens' `cases/solve.jsonl` (a 3x3-cell Prims maze; every Prims3x3 solve and transmute case uses it). In words: row 1 is open from column 1 to 5; column 1 is open from row 1 to row 5; row 5 is open from column 1 to 5; column 5 is open from row 3 to row 5; and (3,2), (3,3) form a stub off column 1. Everything else is wall.
 
-- Outer entrances, start (3,0), end (1,6), d = 8. Every solver with prune returns exactly one solution, (3,1), (2,1), (1,1), (1,2), (1,3), (1,4), (1,5), for both seeds 0 and 1 (cases `solve/<Algo>/Prims3x3/oo/p/s0`).
+- Outer entrances, start (3,0), end (1,6), d = 8. Every solver with prune returns exactly one solution, R1, for both seeds 0 and 1 (cases `solve/<Algo>/Prims3x3/oo/p/s0`).
 - Inner entrances, start (5,3), end (3,1), d = 4. The shortest solution is (5,2), (5,1), (4,1) (cases `.../Prims3x3/ii/p/s0`).
 - Raw walk example, `solve/BacktrackingSolver/Prims3x3/ii/np/s0`: (5,3), (5,2), (5,1), (4,1), (3,1). It starts on the inner start and ends on the inner end. Pruning trims both ends to (5,2), (5,1), (4,1).
 - Raw walk with a backtrack, `solve/BacktrackingSolver/Prims3x3/oo/np/s0` (27 squares): it begins at (3,1), runs down to (5,1), along row 5 to (5,5), up to the dead end (3,5), back down and along row 5 to (5,1), back up to (3,1), into the dead end (3,3) and back, then (2,1), (1,1), and along row 1 to (1,5). Loop erasure reduces it to the 7-square solution above.

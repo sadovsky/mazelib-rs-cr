@@ -6,6 +6,36 @@
 
 use crate::{Grid, Result, Rng};
 
+mod aldous_broder;
+mod backtracking;
+mod binary_tree;
+pub(crate) mod cellgrid;
+mod cellular_automaton;
+mod division;
+mod dungeon_rooms;
+mod ellers;
+mod growing_tree;
+mod hunt_and_kill;
+mod kruskal;
+mod prims;
+mod sidewinder;
+mod trivial;
+mod wilsons;
+pub use aldous_broder::AldousBroder;
+pub use backtracking::BacktrackingGenerator;
+pub use binary_tree::{BinaryTree, Skew};
+pub use cellular_automaton::CellularAutomaton;
+pub use division::Division;
+pub use dungeon_rooms::{DungeonRooms, Room};
+pub use ellers::Ellers;
+pub use growing_tree::GrowingTree;
+pub use hunt_and_kill::HuntAndKill;
+pub use kruskal::Kruskal;
+pub use prims::Prims;
+pub use sidewinder::Sidewinder;
+pub use trivial::{MazeType, TrivialMaze};
+pub use wilsons::Wilsons;
+
 /// Builds a maze grid. Constructors validate the size and options; `generate`
 /// draws from `rng` and returns a `(2h+1) x (2w+1)` grid.
 pub trait Generator {

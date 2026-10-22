@@ -40,9 +40,9 @@ As in `_common.md`. No others. (With an isolated entry square the original fails
 | end unreachable | `[]` (port) |
 
 ## Worked examples (goldens)
-Grid G1 rows: `#######`, `#.....#`, `#.#####`, `#...#.#`, `#.###.#`, `#.....#`, `#######`.
-- `solve/Tremaux/Prims3x3/oo/np/s0`: start (3,0), end (1,6). One raw walk of 28 squares: (3,0), (3,1), (4,1), (5,1), then along row 5 to (5,5), up to the dead end (3,5) and back to (5,5), back along row 5 to (5,1), up to (3,1), east into the dead end (3,3) and back to (3,1), then (2,1), (1,1), (1,2), (1,3), (1,4), (1,5).
-- `solve/Tremaux/Prims3x3/oo/p/s0`: pruned `[[ (3,1), (2,1), (1,1), (1,2), (1,3), (1,4), (1,5) ]]`.
+Grid G1 is the 7x7 `grid` field of case `solve/BacktrackingSolver/Prims3x3/oo/p/s0` in the goldens' `cases/solve.jsonl` (a 3x3-cell Prims maze; every Prims3x3 solve and transmute case uses it). In words: row 1 is open from column 1 to 5; column 1 is open from row 1 to row 5; row 5 is open from column 1 to 5; column 5 is open from row 3 to row 5; and (3,2), (3,3) form a stub off column 1. Everything else is wall.
+- `solve/Tremaux/Prims3x3/oo/np/s0`: start (3,0), end (1,6). One raw walk of 28 squares: (3,0), (3,1), (4,1), (5,1), then along row 5 to (5,5), up to the dead end (3,5) and back to (5,5), back along row 5 to (5,1), up to (3,1), east into the dead end (3,3) and back to (3,1), then north to (1,1) and east along row 1, finishing on (1,5).
+- `solve/Tremaux/Prims3x3/oo/p/s0`: pruned one solution R1: the 7 squares going up column 1 from (3,1) to (1,1) and then along row 1 to (1,5).
 - `solve/Tremaux/Prims3x3/ii/np/s0`: start (5,3), end (3,1). Raw `[[ (5,3), (5,2), (5,1), (4,1), (3,1) ]]`.
 
 ## Open questions

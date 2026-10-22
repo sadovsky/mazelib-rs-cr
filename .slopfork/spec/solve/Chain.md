@@ -38,8 +38,8 @@ As in `_common.md`. An unknown `turn` value is not an error.
 | guide line fully open | solution is the guide line with its connecting slots, with no robots |
 
 ## Worked examples (goldens)
-Grid G1 rows: `#######`, `#.....#`, `#.#####`, `#...#.#`, `#.###.#`, `#.....#`, `#######`.
-- `solve/Chain/Prims3x3/oo/np/s0` and `solve/Chain-left/Prims3x3/oo/np/s0`: start (3,0), end (1,6). Both raw outputs are `[[ (3,1), (2,1), (1,1), (1,2), (1,3), (1,4), (1,5) ]]`. The guide line runs (3,1), (1,3), (1,5). The first, diagonal step uses the vertical-first L: (2,1), (1,1), (1,2), then (1,3). Next comes a straight step through (1,4) to (1,5). There is no backtracking, so pruning changes nothing.
+Grid G1 is the 7x7 `grid` field of case `solve/BacktrackingSolver/Prims3x3/oo/p/s0` in the goldens' `cases/solve.jsonl` (a 3x3-cell Prims maze; every Prims3x3 solve and transmute case uses it). In words: row 1 is open from column 1 to 5; column 1 is open from row 1 to row 5; row 5 is open from column 1 to 5; column 5 is open from row 3 to row 5; and (3,2), (3,3) form a stub off column 1. Everything else is wall.
+- `solve/Chain/Prims3x3/oo/np/s0` and `solve/Chain-left/Prims3x3/oo/np/s0`: start (3,0), end (1,6). Both raw outputs are one solution R1: the 7 squares going up column 1 from (3,1) to (1,1) and then along row 1 to (1,5). The guide line runs (3,1), (1,3), (1,5). The first, diagonal step uses the vertical-first L: it goes up two rows through the slot to the corner cell (1,1), then right two columns to (1,3). The second step is straight, through one slot to (1,5). There is no backtracking, so pruning changes nothing.
 - `solve/Chain/Prims3x3/ii/np/s0`: start (5,3), end (3,1). Raw `[[ (5,3), (5,2), (5,1), (4,1), (3,1) ]]`, pruned `[[ (5,2), (5,1), (4,1) ]]`.
 - `solve/Chain/Prims6x6/oo/p/s0`: start (11,12), end (7,0). Pruned solution length 27. Raw length 1059.
 

@@ -34,9 +34,9 @@ As in `_common.md`. No others.
 | end unreachable | `[]` (port) |
 
 ## Worked examples (goldens)
-Grid G1 rows: `#######`, `#.....#`, `#.#####`, `#...#.#`, `#.###.#`, `#.....#`, `#######`.
-- `solve/RandomMouse/Prims3x3/oo/p/s0`: start (3,0), end (1,6). Result `[[ (3,1), (2,1), (1,1), (1,2), (1,3), (1,4), (1,5) ]]`.
-- `solve/RandomMouse/Prims3x3/ii/np/s0`: start (5,3), end (3,1). Raw `[[ (5,3), (5,2), (5,1), (5,2), (5,3), (5,2), (5,1), (4,1), (3,1) ]]`. The mouse went west, came straight back east, then went west again. Pruned (`.../ii/p/s0`): `[[ (5,2), (5,1), (4,1) ]]`.
+Grid G1 is the 7x7 `grid` field of case `solve/BacktrackingSolver/Prims3x3/oo/p/s0` in the goldens' `cases/solve.jsonl` (a 3x3-cell Prims maze; every Prims3x3 solve and transmute case uses it). In words: row 1 is open from column 1 to 5; column 1 is open from row 1 to row 5; row 5 is open from column 1 to 5; column 5 is open from row 3 to row 5; and (3,2), (3,3) form a stub off column 1. Everything else is wall.
+- `solve/RandomMouse/Prims3x3/oo/p/s0`: start (3,0), end (1,6). Result one solution R1: the 7 squares going up column 1 from (3,1) to (1,1) and then along row 1 to (1,5).
+- `solve/RandomMouse/Prims3x3/ii/np/s0`: start (5,3), end (3,1). The raw walk has 9 squares: it starts on the start cell, goes west to (5,1), immediately returns to the start cell, goes west to (5,1) a second time, then north through (4,1) onto the end cell. Pruned (`.../ii/p/s0`): `[[ (5,2), (5,1), (4,1) ]]`.
 - `solve/RandomMouse/Prims3x3/oo/np/s0`: an 87-square raw walk for the 7-square route.
 
 ## Open questions
