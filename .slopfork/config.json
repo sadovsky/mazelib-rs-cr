@@ -1,0 +1,41 @@
+{
+  "source": {
+    "location": "../mazelib-source",
+    "repo_url": "https://github.com/john-science/mazelib",
+    "revision": "56cd88294a36746bbd324c2c9f7e4ab26095deb3",
+    "license": "MIT",
+    "runnable": null
+  },
+  "target": {
+    "language": "rust",
+    "style": "idiomatic",
+    "src": "src"
+  },
+  "mode": "cleanroom",
+  "phase": "intake",
+  "sealed_paths": [
+    "../mazelib-source",
+    "../mazelib",
+    "../mazelib-rs-cr-dirty",
+    "/usr/local/lib/python3.13/site-packages/mazelib",
+    "/usr/lib/python3/dist-packages/mazelib",
+    "~/.local/lib/python3.13/site-packages/mazelib",
+    "../mazelib-ts-tx",
+    "../mazelib-rs-tx"
+  ],
+  "unsealed_paths": [
+    "../mazelib-source/README.md",
+    "../mazelib-source/docs"
+  ],
+  "sealed_url_patterns": [
+    "github\\.com/john-science/mazelib/(blob|raw|tree|archive)/",
+    "raw\\.githubusercontent\\.com/john-science/mazelib/",
+    "pypi\\.org/.*mazelib",
+    "files\\.pythonhosted\\.org/.*mazelib",
+    "github\\.com/sadovsky/(mazelib-ts-tx|mazelib-rs-tx)",
+    "raw\\.githubusercontent\\.com/sadovsky/(mazelib-ts-tx|mazelib-rs-tx)/"
+  ],
+  "probe_commands": [],
+  "default_level": "L2",
+  "modules": []
+}
