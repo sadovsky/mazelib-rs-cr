@@ -1,3 +1,31 @@
 {
-  "started_at": "2026-10-22T22:31:09Z"
+  "started_at": "2026-10-22T22:31:09Z",
+  "finished_at": "2026-10-22T23:06:09Z",
+  "src_loc": 3939,
+  "test_loc": 2594,
+  "loc_note": "non-blank lines of Rust in src/, adapter/src/, examples/; lines from #[cfg(test)] onward (and src/maze_tests.rs) count as test_loc",
+  "spec_questions": 14,
+  "guard_denials": 6,
+  "guard_denials_note": "all 6 were false positives: Bash heredocs whose `..`, `//` or `/` tokens resolved to an ancestor of a sealed path (3 main thread, 3 builder); no actual attempt to read the original. 57 allowed spec-writer reads.",
+  "cases_exact": 168,
+  "cases_invariant": 2228,
+  "cases_total": 2396,
+  "cases_passed": 2396,
+  "deviations": [
+    "Ellers: never overflows; the 8 KNOWN_BUGS cases (xskew 0.9 at 12x17) return a perfect maze instead of OverflowError",
+    "Collision: returns all shortest paths (cap 64) on loopy/room mazes; the 12 KNOWN_BUGS cases return valid results instead of TypeError",
+    "ShortestPath: returns the true shortest path for inner entrances, where the original returned no solution",
+    "ShortestPaths: returns only distinct shortest paths (cap 1000), not the longer detours the original also listed",
+    "Random-walk solvers (BacktrackingSolver, RandomMouse, Tremaux): return no solution on an unreachable end instead of hanging; walks are capped at 500k moves and then finished by BFS",
+    "Chain: `turn` only changes tie-breaking (the original showed no observable effect)",
+    "BinaryTree: a random skew is drawn at the first generate() rather than at construction",
+    "HuntAndKill / Wilsons / DungeonRooms: random hunts are bounded and fall back to a scan, so every cell is always visited",
+    "CellularAutomaton: NaN/infinite/huge complexity or density are clamped instead of raising ValueError/OverflowError",
+    "DungeonRooms: rooms extending past the grid are clipped rather than skipped",
+    "DeadEndFiller: missing start/end tolerated (original: TypeError); out-of-grid entrances give AssertionError in all transmuters (original: IndexError or no error)",
+    "CuldeSacFiller: never seals a loop touching start/end (original does not check)",
+    "Perturbation: keeps perfect mazes perfect for every parameter set",
+    "Maze.generate_monte_carlo: prefers candidates that have a solution; repeat/entrances < 1 give AssertionError (original: IndexError/ValueError); degenerate entrance grids give ValueError instead of not terminating",
+    "RNG streams are per-Maze (explicit Rng), not process-global"
+  ]
 }

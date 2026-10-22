@@ -37,3 +37,15 @@ Assessment: low risk (structural false positives). To clear the audit anyway, ei
 - rewrite `src/transmute/mod.rs:143-150` from spec: put the invariant-name list on one line or derive it from `invariants.json`.
 
 Then re-run the two commands above.
+
+## Re-audit
+
+Re-run after the clean side rewrote the previously flagged test literals (phase `audit`, source at the pinned revision, 65 source files compared).
+
+| Target | Findings |
+|---|---|
+| `src/` | 0 |
+| `adapter/src/` | 0 |
+| `examples/` | 0 |
+
+No flagged target file:line locations. Code audit is clean.
